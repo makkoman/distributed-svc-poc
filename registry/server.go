@@ -7,8 +7,9 @@ import (
 	"sync"
 )
 
+// TODO: get from config
 const ServerPort = ":3000"
-const ServicesURL = "localhost" + ServerPort + "/services"
+const ServicesURL = "http://localhost" + ServerPort + "/services"
 
 type registry struct {
 	registrations []Registration

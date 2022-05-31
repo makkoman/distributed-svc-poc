@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/makkoman/distributed-svc-poc/registry"
 	stlog "log"
 
 	"github.com/makkoman/distributed-svc-poc/log"
@@ -13,7 +14,12 @@ func main() {
 	log.Run("./app.log")
 	// TODO: get from config
 	host, port := "localhost", "8080"
-	ctx, err := service.Start(context.Background(), "Log Service", host, port, log.RegisterHandlers)
+	address := fmt.Sprintf("http://%s:%s", host, port)
+	r := registry.Registration{
+		ServiceName: registry.LogService,
+		ServiceURL:  address,
+	}
+	ctx, err := service.Start(context.Background(), r, host, port, log.RegisterHandlers)
 	if err != nil {
 		// custom logger failed to start, log using standard logger
 		stlog.Fatal(err)

@@ -3,17 +3,22 @@ package service
 import (
 	"context"
 	"fmt"
+	"github.com/makkoman/distributed-svc-poc/registry"
 	"log"
 	"net/http"
 )
 
-func Start(ctx context.Context, serviceName, host, port string, registerHandlers func()) (context.Context, error) {
+func Start(ctx context.Context, reg registry.Registration, host, port string, registerHandlers func()) (context.Context, error) {
 	registerHandlers()
-	ctx = startService(ctx, serviceName, host, port)
+	ctx = startService(ctx, reg.ServiceName, host, port)
+	err := registry.RegisterService(reg)
+	if err != nil {
+		return ctx, err
+	}
 	return ctx, nil
 }
 
-func startService(ctx context.Context, serviceName, host, port string) context.Context {
+func startService(ctx context.Context, serviceName registry.ServiceName, host, port string) context.Context {
 	ctx, cancel := context.WithCancel(ctx)
 	// instantiate the service
 	var srv http.Server
